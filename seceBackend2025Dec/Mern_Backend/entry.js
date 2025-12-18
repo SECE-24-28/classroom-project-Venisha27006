@@ -2,15 +2,15 @@ const express = require("express");
 const mdb = require("mongoose");
 const Signup = require("./models/SignupSchema");
 const bcrypt = require("bcrypt");
-const cors = require("cors")
+const cors = require("cors");
 const app = express();
-const PORT = 8001;
+const PORT = process.env.PORT || 8001;
 
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 mdb
-  .connect("mongodb://localhost:27017/seceDec2025")
+  .connect(process.env.MONGODB_URI || "mongodb+srv://venishas2024csecs_db_user:veni2509@cluster0.q1fwjd4.mongodb.net/")
   .then(() => console.log("MongoDB Connection Successful"))
   .catch((err) => console.log("MongoDB Connection Unsuccessful", err));
 
@@ -21,6 +21,10 @@ app.get("/", (req, res) => {
 app.post("/signup", async (req, res) => {
   try {
     const { email, username, password } = req.body;
+    
+    if (!email || !username || !password) {
+      return res.status(400).json({ message: "All fields are required", isSignup: false });
+    }
     
     // Check if user already exists
     const existingUser = await Signup.findOne({ email: email });
@@ -36,7 +40,7 @@ app.post("/signup", async (req, res) => {
     });
     
     await newSignup.save();
-    res.status(200).json({ Message: "Signup Successful", isSignup: true });
+    res.status(200).json({ message: "Signup Successful", isSignup: true });
   } catch (error) {
     console.log("Signup Error:", error);
     res.status(500).json({ message: "Signup Failed", isSignup: false });
@@ -47,14 +51,12 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const existingUser = await Signup.findOne({ email: email });
-    console.log(existingUser);
 
     if (existingUser) {
       const isValidPassword = await bcrypt.compare(
         password,
         existingUser.password
       );
-      console.log(isValidPassword);
 
       if (isValidPassword) {
         res.status(200).json({
@@ -90,11 +92,6 @@ app.get("/json", (req, res) => {
   });
 });
 
-app.get("/static", (req, res) => {
-  res.sendFile(
-    "/Users/prasanthksp/Documents/RAMPeX-Parent-Folder/Trainings/SECE/SECE_MERN_DEC_2025/seceBackend2025Dec/index.html"
-  );
-});
 
 app.listen(PORT, () => {
   console.log(`Server Started Successfully in the port ${PORT}`);
