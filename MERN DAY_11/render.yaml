@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: mern-backend
+    env: node
+    rootDir: ./MERN DAY_11/seceBackend2025Dec
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
