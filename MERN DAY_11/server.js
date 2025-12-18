@@ -4,8 +4,8 @@ const bcrypt = require("bcrypt");
 const cors = require("cors");
 const path = require("path");
 
-// Import the Signup model from the correct path
-const Signup = require("./MERN DAY_11/seceBackend2025Dec/Mern_Backend/models/SignupSchema");
+// Import the Signup model
+const Signup = require("./SignupSchema");
 
 const app = express();
 const PORT = process.env.PORT || 8001;
@@ -97,7 +97,7 @@ app.get("/json", (req, res) => {
 });
 
 app.get("/static", (req, res) => {
-  res.sendFile(path.join(__dirname, "MERN DAY_11/seceBackend2025Dec/Mern_Backend/index.html"));
+  res.send("Static file endpoint");
 });
 
 app.listen(PORT, () => {
